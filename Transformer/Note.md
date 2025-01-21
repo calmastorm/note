@@ -84,7 +84,71 @@ Self-Attention的作用其实很简单，就是让每个词都能够通过观察
 
 ### Matrix Calculation
 
-【未完成】
+上面已经完整地解释过self-attention的计算了，这里只是整合一下，其实我们可以使用简化后的公式直接计算到位。首先是QKV的计算，X都是一样的，只是分别和WQ、WK、WV做矩阵乘法。
+
+![self-attention-matrix-calculation](../img/self-attention-matrix-calculation.png)
+
+下一步就是直接套公式，然后就可以得到Z矩阵了，非常快捷，不用像上面那样一个一个算每个Z。
+
+### Multi-headed Attention
+
+我们总说多头注意力机制，这里就讲一下，它是怎么提高表现的。首先，它增强了模型专注于不同位置的能力。比方说我们上面的这个Z，里面有一些别的词的encoding，但是主要包含它自己。看这个句子，"<u>The animal didn't cross the street because it was too tired</u>"，如果是多头的话，他就知道<u>it</u>到底是指哪个词了（这个例子上面讲过）。其次，multi-head给了attention layer多个"representation subspaces"，简单来说就是多组QKV权重。下面这图就是举例它有两个头。
+
+![transformer_attention_heads_qkv](../img/transformer_attention_heads_qkv.png)
+
+现在假设我们每个self-attention有八个头，正如下面这个图。
+
+![transformer_attention_heads_z](../img/transformer_attention_heads_z.png)
+
+但这也有一个问题，就是FFN层不需要这么多矩阵，FFN只要一个矩阵（每个词一个向量，组合成的一个矩阵）。为了解决这个问题，我们先把Z0到Z7都拼接起来，然后再乘以一个WO权重矩阵，这个矩阵会和整个模型一起训练。那我们就得到了一个Z，这个Z包含了所有注意力头的信息，我们把这个给FFN就可以了。
+
+![transformer_attention_heads_weight_matrix_o](../img/transformer_attention_heads_weight_matrix_o.png)
+
+这里用一张大图总结，从左到右就是self-attention内数据的传递。
+
+![transformer_multi-headed_self-attention-recap](../img/transformer_multi-headed_self-attention-recap.png)
+
+### Positional Encoding
+
+上面没提这个，这里提一下，位置编码。简单来说，一个句子中有这么多词，怎么让机器知道他们的顺序呢？答案就是位置编码。方法也很简单，就是在输入嵌入时加一个vector。这些vectors会有一定规律，帮助模型确定每个词的位置，或者是记录了不同词之间的距离。
+
+![transformer_positional_encoding_vectors](../img/transformer_positional_encoding_vectors.png)
+
+这里是一个例子，每个input vector长度只有4的例子，他们的positional encoding长度也只有4。把他们加起来，就可以给第一层encoder了。
+
+![transformer_positional_encoding_example](../img/transformer_positional_encoding_example.png)
+
+原论文中的规律大概长这样，y轴是指第几个词，x轴是每个vector中的第几个index。
+
+![attention-is-all-you-need-positional-encoding](../img/attention-is-all-you-need-positional-encoding.png)
+
+### Residuals
+
+这里说说残差连接，residual connection。简单来说，就是有原先的X数据，直接连接到计算好的Z那里，然后进行相加和归一化。这个不仅在SA层有，FFN层也有。
+
+![transformer_resideual_layer_norm_2](../img/transformer_resideual_layer_norm_2.png)
+
+我们把视角再拉远一点，这个其实在每个Encoder和Decoder里面都有，包括Decoder里面的Encoder-Decoder注意力层都有。
+
+![transformer_resideual_layer_norm_3](../img/transformer_resideual_layer_norm_3.png)
+
+## Decoding
+
+前面已经聊了很多Encoder了，那说明我们Decoder也已经掌握了一大部分了，因为他们非常相似。这里最后一个encoder会输出一个output list，这个output list会变成一组注意力向量：K和V，他们会被Decoder里面的encoder-decoder注意力层用到，作用是帮助decoder专注于输入序列中正确的位置。输出具体是如何变成K和V的没有提及，需要后续学习。
+
+![transformer_decoding_1](../img/transformer_decoding_1.gif)
+
+上面这个图展示了transformer生成第一个词，接下来要生成其他的词。上面生成了<u>I</u>，那么我们要把这个词也做个词嵌入，然后和positional encoding相加，输入给第一个decoder。并且不断把新生成的东西重复上面的步骤，再喂给第一个decoder，直到最后一个decoder生成了EOS，表示要中止生成。
+
+![transformer_decoding_2](../img/transformer_decoding_2.gif)
+
+这里说一下decoder的SA层和encoder的SA层有什么差别。Decoder中，SA层只被允许观察前面已经输出的sequence，使用的方法是在softmax进行计算前，遮挡未来的positions（把他们设置为-inf）。目的是防止decoder的自注意力访问未来的token。
+
+Encoder-Decoder Attention层和多头自注意力层的运作方式是一样的，只有一点不同，那就是它会直接从下面的层中来创建Q矩阵，然后使用encoders那边输出的K和V。
+
+## Final Linear and Softmax
+
+
 
 ## Links
 
