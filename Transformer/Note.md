@@ -148,7 +148,48 @@ Encoder-Decoder Attention层和多头自注意力层的运作方式是一样的�
 
 ## Final Linear and Softmax
 
+从上面的图可以观察到，Decoder叠了这么多层，最后其实不会直接给出我们要的词，而是给出一个浮点数向量，这个向量通过一个全连接层和一个Softmax层，最终给出概率最高的词。
 
+假设模型知道10000个不同的单词，那么全连接层后面紧接着的logits向量就会有10000格宽。然后他们再进入softmax计算，算出这一万个词的概率，产出一个10000格宽的log概率向量，选择其中最高概率的词。
+
+![transformer_decoder_output_softmax](../img/transformer_decoder_output_softmax.png)
+
+## Training
+
+在训练中，一个未经过训练的模型会通过一样的forward pass，但由于我们用着含有label的训练集，所以我们可以拿它和正确的输出做比较。
+
+可视化一下，假设输出词典内只有六个单词，包含EOS，如下面这个图。
+
+![vocabulary](../img/vocabulary.png)
+
+我们定义好输出词典后，我们就可以使用一个有着一样宽度的向量来表示每个词了，这个就叫独热编码。下面这个图就是<u>am</u>这个词的编码。
+
+![one-hot-vocabulary-example](../img/one-hot-vocabulary-example.png)
+
+### The Loss Function
+
+假设我们正在训练模型，我们的目标是让模型把<u>merci</u>翻译成<u>thanks</u>。这意味着我们要让输出变成<u>thanks</u>这个词的概率分布。但是由于模型还没怎么训练，翻译肯定会失败。看这个图，由于（Untrained）模型的参数是随机初始化的，模型就会给每个词以任意值生成一个概率分布。我们拿这个错误的概率分布和真实的概率分布进行比较，然后对模型的权重进行调整（采用反向传播）来使得这个output会更接近真实值。
+
+![transformer_logits_output_and_label](../img/transformer_logits_output_and_label.png)
+
+问题来了，怎么比较两个概率分布呢？互相减就可以了，具体的话可以看一下[交叉熵](https://colah.github.io/posts/2015-09-Visual-Information/)和[KL divergence](https://www.countbayesie.com/blog/2017/5/9/kullback-leibler-divergence-explained)。举个翻译的例子，<u>je suis étudiant</u>变成<u>i am a student</u>。在这样一个有多个词的情况下，我们会想要模型连续地输出概率分布，是什么样的概率分布呢？
+
+- 每个概率分布都有一个向量来代表（实际项目中长度可能高达30000或50000）
+- 第一个概率分布在<u>I</u>这个词有最高的概率（这很明显）
+- 第二个概率分布在<u>am</u>这个词有最高的概率分布（也很明显）
+- 然后不断连续，直到第五个输出给出EOS符号。
+
+这里我们先看一眼目标模型输出是什么样的。
+
+![output_target_probability_distributions](../img/output_target_probability_distributions.png)
+
+在模型经过足够的训练后，我们会希望概率分布大概长这样：
+
+![output_trained_model_probability_distributions](../img/output_trained_model_probability_distributions.png)
+
+由于我们一次只产生一个输出，我们可以让模型直接选择概率最高的那个选项，其他的直接丢掉，然后继续下一个位置，这个叫做贪心解码。另一种方法就是，不直接选择最高的概率，而是先保留最高概率的两个词，然后接下来跑两次模型，分别使用刚才的两个词，更少error的那个同时保留位置1和2。这个方法叫做beam search，在刚才说的这个例子里，beam_size是2，然后top_beams也是2（意味着返回两个翻译），这些都是超参数，可以手动调节。
+
+> 个人对于KL divergence这篇没太看懂。
 
 ## Links
 
