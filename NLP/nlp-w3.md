@@ -73,6 +73,8 @@ DNN会过拟合，使用regularization解决。
 
 更多关于批归一化的内容可以参考[这篇博客](https://www.cnblogs.com/skyfsm/p/8453498.html)
 
+更多关于Covariate shift问题可以参考[这篇博客](https://blog.csdn.net/mao_xiao_feng/article/details/54317852)
+
 ### 梯度爆炸
 
 很常见的问题，这里提到一个解决办法叫Gradient clipping。
