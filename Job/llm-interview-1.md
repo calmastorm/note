@@ -57,3 +57,27 @@ Transformer中使用不同的权重矩阵生成Q和K，是<u>为了让模型在�
 Embedding matrix的初始化方法是[Xavier初始化](../NLP/nlp-w3.md#xavier--he-initialization)，这种方法的方差是1/embedding size，因此乘以embedding size的开方会使得embedding matrix的方差是1，在这个scale下更有利于embedding matrix的收敛。
 
 > 我其实也没太理解这个解答，但反正这么计算是正确的。因为是embedding size的开方乘以embedding matrix，并不是embedding size的开方直接乘以原方差，总之，得出1是没有问题的。
+
+**Q09：简单介绍一下Transformer的位置编码？有什么意义和优缺点？**
+
+因为self-attention的位置都是无关的，因此需要让token进入encoder前和位置编码相加，表达出每个token的位置信息。Transformer用了固定的positional encoding来表示token再句子中的绝对位置信息。也有些别的模型使用了其他方式来表达位置信息，比如Llama-3用了相对位置【此处可以插入另一篇相关的笔记】。
+
+**Q10：你还了解哪些关于位置编码的技术，他们的优缺点是什么？**【RPE没懂】
+
+相对位置编码（RPE）
+
+1. 在计算attention score和weighted value时各加入一个可训练的表示相对位置的参数。
+2. 在生成多头注意力时，把对key来说，绝对位置转为相对query的位置。
+3. 复数域函数，已知一个词在某个位置的词向量表示，可以计算出它在任何位置的词向量表示。
+
+其中，1和2的方法是词向量与位置编码结合，是亡羊补牢，而复数域是生成词向量的时候就生成对应的位置信息。
+
+除了基于sin和cos函数的位置编码外，还有其他一些关于位置编码的技术，比如可学习的位置嵌入。也就是把位置编码视为一个可学习的参数矩阵，[这里](../NLP/nlp-w4.md)是更详细的笔记。还有对角线位置编码，轴角位置编码等。
+
+**Q11：简单讲一下Transformer中的残差结构和它的意义。**
+
+Encoder和Decoder的self-attention层和FFN层均有残差连接，它的作用就是让模型在进行反向传播时不会造成梯度消失。
+
+**Q12：为什么Transformer块使用LayerNorm而不是BatchNorm？LayerNorm在Transformer的位置是哪里？**
+
+CV任务使用BatchNorm是认为channel维度的信息对CV方面有重要意义，要一批一批来。如果channel维度也归一化，会造成不同通道信息一定的损失。同理，NLP任务中，认为句子长度不一样，并且各个batch的信息没有太大的联系，因此只考虑句子内信息的归一化，也就是LayerNorm。LayerNorm的位置在self-attention层、FFN层、以及Encoder-Decoder Attention层的残差连接相加之后。
