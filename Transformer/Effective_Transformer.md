@@ -1,6 +1,6 @@
 # Effective Transformer
 
-这是LLM课第五周的笔记，主要内容是关于如何优化一个2017年的原始Transformer。
+这是[LLM课第五周](Effective_Transformer.pdf)的笔记，主要内容是关于如何优化一个2017年的原始Transformer。
 
 从上往下，可以优化的地方有FFN层，多头Self-Attention层，LayerNorm方法，以及位置编码。
 
@@ -54,4 +54,48 @@ Perplexity是一个使用Google T5为base的大模型。
 
 ## LayerNorm改进
 
+### Pre-Norm
+
+原版Transformer的LayerNorm都是在残差相加之后的，gradient L2 norm持续在一个较大的值（下图显示在1.5以上）。一个改进方法就是把LayerNorm放到残差相加之前，甚至是多头注意力层和FFN之前，可以看到gradient L2 norm是可以缓慢下降的（降到0.2以下）。
+
+![improve-8](../img/improve-8.png)
+
+### RMSNorm
+
+Root Mean Square Norm，在Norm的阶段只进行一个rescaling，不需要做recentering。总体效果跟LayerNorm是非常接近的，但是不同的点在于，它不再需要做recentering了，所以效率快了很多。
+
+![improve-9](../img/improve-9.png)
+
+上面提到的这些，FFN，注意力，LayNorm的架构升级，都是可以适用于大多数近期公开的LLM产品的。
+
+大多数的Transformer架构升级，都是为了效率和大规模学习的稳定性。简洁简便往往能获胜。
+
 ## Positional Encoding 改进
+
+原版Transformer自己对位置并不了解，因为一下子看到了全部词，所以不知道哪个在前面哪个在后面。相比之下，CNN有locality prior，相近的数据会被一起处理，RNN有sequential prior，词是一个个被处理的。所以position encoding就是为了给Transformer加上位置信息。
+
+### Absolute Position Information
+
+其中一种绝对位置的方法就是，使用sinusoid位置嵌入，偶数的时候给一个sin函数，奇数的时候给一个cos函数。
+
+![improve-10](../img/improve-10.png)
+
+另一种绝对位置的方法就是做一个学习的embedding，使得每一个位置都有一个单独的embedding vector。这个和NLP学的，每一个word有一个学习来的vector是不一样的，这个是学了个位置，那个是学的每一个词在word space里。
+
+![improve-11](../img/improve-11.png)
+
+### Relative Position information
+
+特性是Language prior，即语言中只有相对位置是重要的。在注意力机制中编码入相对位置信息可以使得准确率稍微提升。
+
+![improve-12](../img/improve-12.png)
+
+### Rotational position embedding
+
+这个是模仿自注意力中，使用点乘计算相似度的做法，思考如何让这种旋转仅依赖于相对位置呢？
+
+![improve-13](../img/improve-13.png)
+
+这个部分没怎么看懂，但是总得来说就是RoPE的效果比不使用rotary的效果更好。
+
+然后上面的这些东西，FFN使用SwiGLU，Attention使用GQA，LayerNorm使用Pre-LayerNorm+RMSNorm，Position使用RoPE，加起来就是LLaMA-3模型。
