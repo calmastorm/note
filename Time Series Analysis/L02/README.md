@@ -30,9 +30,7 @@ $$
 
 ### **方法 2：使用回归预测**
 引入 **年龄** 变量，建立线性回归模型：
-$$
-Y = \beta_0 + \beta_1 X + \epsilon
-$$
+$$Y = \beta_0 + \beta_1 X + \epsilon$$
 
 发现 **年龄与胆固醇水平存在线性关系**，比单纯使用均值预测更准确。
 
@@ -49,56 +47,53 @@ $$
 
 ### **两种回归关系**
 1. **确定性关系 (Functional Relationship)**：
-   \[
-   Y = 2X
-   \]
+   $$Y = 2X$$
 2. **统计关系 (Statistical Relationship)**：
-   \[
-   Y = E[Y] + \epsilon
-   \]
-   其中，\( E[Y] \) 是回归模型的**期望值**。
+   $$Y = E[Y] + \epsilon$$
+
+   其中，$\( E[Y] \)$ 是回归模型的**期望值**。
 
 ---
 
 ## **4. 多元线性回归 (Multiple Linear Regression, MLR)**
 ### **数学模型**
-\[
-Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \dots + \beta_p X_{ip} + \epsilon_i
-\]
+
+$$Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \dots + \beta_p X_{ip} + \epsilon_i$$
+
 其中：
-- \( Y_i \)：因变量
-- \( X_{i1}, X_{i2}, ..., X_{ip} \)：自变量
-- \( \beta_0, \beta_1, ..., \beta_p \)：回归系数
-- \( \epsilon_i \)：误差项
+- $\( Y_i \)$：因变量
+- $\( X_{i1}, X_{i2}, ..., X_{ip} \)$：自变量
+- $\( \beta_0, \beta_1, ..., \beta_p \)$：回归系数
+- $\( \epsilon_i \)$：误差项
 
 ### **矩阵形式**
-\[
-Y = X\beta + \epsilon, \quad \epsilon \sim N(0, \sigma^2 I)
-\]
+
+$$Y = X\beta + \epsilon, \quad \epsilon \sim N(0, \sigma^2 I)$$
+
 其中：
-- \( X \) 是 **设计矩阵 (design matrix)**。
-- \( \beta \) 是 **回归系数向量**。
+- $\( X \)$ 是 **设计矩阵 (design matrix)**。
+- $\( \beta \)$ 是 **回归系数向量**。
 
 ---
 
 ## **5. 估计回归系数**
 ### **最小二乘法 (Least Squares Estimation, LSE)**
 目标是**最小化残差平方和 (Sum of Squared Errors, SSE)**：
-\[
-\sum_{i=1}^{n} (Y_i - \beta_0 - \beta_1 X_{i1} - \dots - \beta_p X_{ip})^2
-\]
+
+$$\sum_{i=1}^{n} (Y_i - \beta_0 - \beta_1 X_{i1} - \dots - \beta_p X_{ip})^2$$
+
 通过求导，得出最优解：
-\[
-\hat{\beta} = (X'X)^{-1} X'Y
-\]
+
+$$\hat{\beta} = (X'X)^{-1} X'Y$$
+
 
 ---
 
 ## **6. 误差方差估计**
 ### **方差估计公式**
-\[
-s^2 = \frac{SSE}{n - p - 1}
-\]
+
+$$s^2 = \frac{SSE}{n - p - 1}$$
+
 其中：
 - **SSE** 是误差平方和。
 - \( n - p - 1 \) 是自由度。
