@@ -96,57 +96,57 @@ $$s^2 = \frac{SSE}{n - p - 1}$$
 
 其中：
 - **SSE** 是误差平方和。
-- \( n - p - 1 \) 是自由度。
+- $\( n - p - 1 \)$ 是自由度。
 
 ---
 
 ## **7. 评价回归模型**
 ### **残差 (Residuals)**
 计算方法：
-\[
-e_i = Y_i - \hat{Y}_i
-\]
+
+$$e_i = Y_i - \hat{Y}_i$$
+
 **残差分析**用于检测模型拟合的质量。
 
-### **决定系数 \( R^2 \)**
+### **决定系数 $\( R^2 \)$**
 衡量自变量对因变量的解释能力：
-\[
-R^2 = \frac{SSR}{SYY}
-\]
+
+$$R^2 = \frac{SSR}{SYY}$$
+
 **调整后 \( R^2 \)**：
-\[
-R_a^2 = 1 - \frac{SSE / (n - p - 1)}{SYY / (n - 1)}
-\]
+
+$$R_a^2 = 1 - \frac{SSE / (n - p - 1)}{SYY / (n - 1)}$$
+
 
 ---
 
 ## **8. 假设检验**
 ### **F 检验**
 计算 F 统计量：
-\[
-F = \frac{MS_{Reg}}{MS_{Error}}
-\]
-若 \( p\text{-value} < 0.05 \)，则回归模型显著。
+
+$$F = \frac{MS_{Reg}}{MS_{Error}}$$
+
+若 $\( p\text{-value} < 0.05 \)$，则回归模型显著。
 
 ### **t 检验（个别回归系数检验）**
 计算 t 统计量：
-\[
-t^* = \frac{\hat{\beta}_j}{\text{SE}(\hat{\beta}_j)}
-\]
-若 \( |t^*| > t_{\alpha/2, n-p-1} \)，则拒绝 \( H_0 \)。
+
+$$t^* = \frac{\hat{\beta}_j}{\text{SE}(\hat{\beta}_j)}$$
+
+若 $\( |t^*| > t_{\alpha/2, n-p-1} \)$，则拒绝 $\( H_0 \)$。
 
 ---
 
 ## **9. 逻辑回归 (Logistic Regression)**
 适用于**因变量是二分类变量 (Binary Outcome)** 的情况：
-\[
-\log \frac{p}{1 - p} = \beta_0 + \beta_1 X_1 + \dots + \beta_p X_p + \epsilon
-\]
+
+$$\log \frac{p}{1 - p} = \beta_0 + \beta_1 X_1 + \dots + \beta_p X_p + \epsilon$$
+
 
 **估计公式**：
-\[
-p_i = \frac{e^{\beta_0 + \beta_1 X_1 + \dots + \beta_p X_p}}{1 + e^{\beta_0 + \beta_1 X_1 + \dots + \beta_p X_p}}
-\]
+
+$$p_i = \frac{e^{\beta_0 + \beta_1 X_1 + \dots + \beta_p X_p}}{1 + e^{\beta_0 + \beta_1 X_1 + \dots + \beta_p X_p}}$$
+
 
 ---
 
