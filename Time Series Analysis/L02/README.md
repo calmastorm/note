@@ -1,8 +1,3 @@
-<script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-<script type="text/javascript" id="MathJax-script" async
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-</script>
-
 # **多元回归模型 (Multiple Regression Model) - Chapter 2 笔记**
 
 ## **1. 回归分析的目标**
@@ -29,15 +24,15 @@
 24 名高胆固醇患者的**血浆总胆固醇水平 (mg/ml)** 记录：3.5, 1.9, 4.0, 2.6, 4.5, ...
 
 ### **方法 1：使用均值预测**
-\[
+$$
 \hat{Y} = \frac{1}{n} \sum_{i=1}^{n} Y_i
-\]
+$$
 
 ### **方法 2：使用回归预测**
 引入 **年龄** 变量，建立线性回归模型：
-\[
+$$
 Y = \beta_0 + \beta_1 X + \epsilon
-\]
+$$
 
 发现 **年龄与胆固醇水平存在线性关系**，比单纯使用均值预测更准确。
 
