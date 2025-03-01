@@ -44,7 +44,7 @@
 ### **2.2 弱平稳（Weak Stationarity）**
 如果时间序列满足以下两个条件，则称其为**弱平稳（Weakly Stationary）**：
 1. **均值是常数**：
-    $$\mu_t = E[X_t] = \mu, \quad \text$${与时间无关} 
+    $$\mu_t = E[X_t] = \mu, \quad \text{与时间无关} $$
 
 2. **协方差仅取决于时间差 \( k \)，而与具体的时间点 \( t \) 无关**：
     $$\gamma(t, k) = \gamma(k)$$
